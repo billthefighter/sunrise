@@ -5,6 +5,7 @@ import random
 import atexit
 import time
 from rgbmatrix import RGBMatrix
+import argparse
 #define inputs
 #from rgbmatrix import RGBMatrix
 
