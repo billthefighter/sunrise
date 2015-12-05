@@ -4,6 +4,7 @@ from samplebase import SampleBase
 import random
 import atexit
 import time
+from rgbmatrix import RGBMatrix
 #define inputs
 #from rgbmatrix import RGBMatrix
 
@@ -15,10 +16,32 @@ import time
 #atexit.register(clearOnExit)
 
 #---------------------------------- need to create a class that defines a canvas array so I can 
-class displayobject(SampleBase):
+# class displayobject(SampleBase):
+#     def __init__(self, *args, **kwargs):
+#         super(displayobject, self).__init__(*args, **kwargs)
+    
+#     def Run(self,displaymatrix):
+#         offsetCanvas = self.matrix.CreateFrameCanvas()
+#         for x in xrange(len(displaymatrix)):
+#             for y in xrange(len(displaymatrix)):
+#                 blockvalue = displaymatrix[x][y]
+#                 print blockvalue
+#                 offsetCanvas.SetPixel(x, y, blockvalue*255, blockvalue*255, blockvalue*255)
+#                 pass
+#             pass
+class displayobject():
     def __init__(self, *args, **kwargs):
-        super(displayobject, self).__init__(*args, **kwargs)
-    def Run(self,displaymatrix):
+        self.add_argument("-r", "--rows", action = "store", help = "Display rows. 16 for 16x32, 32 for 32x32. Default: 32", default = 32, type = int)
+        self.add_argument("-P", "--parallel", action = "store", help = "For Plus-models or RPi2: parallel chains. 1..3. Default: 1", default = 1, type = int)
+        self.add_argument("-c", "--chain", action = "store", help = "Daisy-chained boards. Default: 1.", default = 1, type = int)
+        self.add_argument("-p", "--pwmbits", action = "store", help = "Bits used for PWM. Something between 1..11. Default: 11", default = 11, type = int)
+        self.add_argument("-l", "--luminance", action = "store_true", help = "Don't do luminance correction (CIE1931)")
+        self.add_argument("-b", "--brightness", action = "store", help = "Sets brightness level. Default: 100. Range: 1..100", default = 100, type = int)
+        self.args = {}
+        self.matrix = RGBMatrix(self.args["rows"], self.args["chain"], self.args["parallel"])
+        self.matrix.pwmBits = self.args["pwmbits"]
+        self.matrix.brightness = self.args["brightness"]
+    def Run(self):
         offsetCanvas = self.matrix.CreateFrameCanvas()
         for x in xrange(len(displaymatrix)):
             for y in xrange(len(displaymatrix)):
@@ -26,8 +49,6 @@ class displayobject(SampleBase):
                 print blockvalue
                 offsetCanvas.SetPixel(x, y, blockvalue*255, blockvalue*255, blockvalue*255)
                 pass
-            pass
-        
 
 class canvasCellularAut():
     def __init__(self):
