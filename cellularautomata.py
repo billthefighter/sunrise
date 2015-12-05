@@ -58,7 +58,6 @@ def basicRun(rule, steps, stepper, seed=[1], k=2, r=1):
         scrollinglife.scroll(pumpoutrow)
         poop += 1
         #print scrollinglife.display
-        showResult(scrollinglife.display,(32,32)) 
         stream = []
         for x in xrange(32):
             for y in xrange(32):
@@ -77,7 +76,7 @@ def basicRun(rule, steps, stepper, seed=[1], k=2, r=1):
 def showResult(result, dims, k=2):
     i = Image.new("L", dims)
     i.putdata(result, (255 / (k - 1)))
-    i = i.crop(i.getbbox())
+    #i = i.crop(i.getbbox())
     i = ImageOps.invert(i)
     i.load()
     i.show()
