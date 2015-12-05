@@ -32,6 +32,7 @@ import argparse
 #             pass
 class displayobject(argparse.ArgumentParser):
     def __init__(self, *args, **kwargs):
+        super(displayobject, self).__init__(*args, **kwargs)
         self.add_argument("-r", "--rows", action = "store", help = "Display rows. 16 for 16x32, 32 for 32x32. Default: 32", default = 32, type = int)
         self.add_argument("-P", "--parallel", action = "store", help = "For Plus-models or RPi2: parallel chains. 1..3. Default: 1", default = 1, type = int)
         self.add_argument("-c", "--chain", action = "store", help = "Daisy-chained boards. Default: 1.", default = 1, type = int)
