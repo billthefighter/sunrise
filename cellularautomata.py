@@ -41,8 +41,9 @@ class displayobject():
         self.matrix = RGBMatrix(self.args["rows"], self.args["chain"], self.args["parallel"])
         self.matrix.pwmBits = self.args["pwmbits"]
         self.matrix.brightness = self.args["brightness"]
+        self.matrix.CreateFrameCanvas()
     def Run(self):
-        offsetCanvas = self.matrix.CreateFrameCanvas()
+
         for x in xrange(len(displaymatrix)):
             for y in xrange(len(displaymatrix)):
                 blockvalue = displaymatrix[x][y]
