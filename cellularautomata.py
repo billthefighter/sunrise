@@ -1,6 +1,6 @@
 from PIL import Image
 from PIL import ImageOps
-#from samplebase import SampleBase
+from samplebase import SampleBase
 import random
 import atexit
 import time
