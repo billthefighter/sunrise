@@ -1,7 +1,7 @@
 from PIL import Image
 from PIL import ImageOps
+#from samplebase import SampleBase
 import random
-#from rgbmatrix import Adafruit_RGBmatrix
 import atexit
 import time
 #define inputs
@@ -15,6 +15,20 @@ import time
 #atexit.register(clearOnExit)
 
 #---------------------------------- need to create a class that defines a canvas array so I can 
+class displayobject(SampleBase):
+    def __init__(self, *args, **kwargs):
+        super(displayobject, self).__init__(*args, **kwargs)
+    def Run(self,displaymatrix):
+        offsetCanvas = self.matrix.CreateFrameCanvas()
+        for x in xrange(len(displaymatrix)):
+            for y in xrange(len(displaymatrix)):
+                blockvalue = displaymatrix[x][y]
+                print blockvalue
+                offsetCanvas.SetPixel(x, y, blockvalue*255, blockvalue*255, blockvalue*255)
+                pass
+            pass
+        
+
 class canvasCellularAut():
     def __init__(self):
         self.display = [[0 for y in range(32)] for x in range(32)]
@@ -22,7 +36,8 @@ class canvasCellularAut():
         self.display.pop(0)
         self.display.append(pop)
     def draw(self):
-        #add stuff here
+        canvas = displayobject()
+        canvas.Run(self.display)
         return
 
     #def pop(self): #pops latest result value into display matrix
@@ -57,20 +72,9 @@ def basicRun(rule, steps, stepper, seed=[1], k=2, r=1):
         pumpoutrow = seed[:]
         scrollinglife.scroll(pumpoutrow)
         poop += 1
-        #print scrollinglife.display
-        stream = []
-        for x in xrange(32):
-            for y in xrange(32):
-                stream.append(scrollinglife.display[x][y])
-                pass
-            pass
-        print stream
-        showResult(stream, (32,32))
+        scrollinglife.draw()
         #----------------------------------------At this point, I want to append 
     #return result, (len(seed), steps + 1)
-    
-#def printRowToMatrix(pumpoutrow):
-    #return
 
 
 def showResult(result, dims, k=2):
