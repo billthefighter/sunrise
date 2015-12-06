@@ -1,6 +1,12 @@
 import argparse, time, sys, os
+<<<<<<< HEAD
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/..'))
 #from rgbmatrix import RGBMatrix
+=======
+
+sys.path.append(os.path.abspath(os.path.dirname(__file__) + '/..'))
+from rgbmatrix import RGBMatrix
+>>>>>>> 3e4e303d4ae0f9d422655663a67c7a043dab40e5
 
 class SampleBase(argparse.ArgumentParser):
     def __init__(self, *args, **kwargs):
@@ -54,6 +60,10 @@ class SampleBase(argparse.ArgumentParser):
             print "Exiting\n"
             sys.exit(0)
 
+<<<<<<< HEAD
         return True
 
 poop = SampleBase()
+=======
+        return True
+>>>>>>> 3e4e303d4ae0f9d422655663a67c7a043dab40e5
