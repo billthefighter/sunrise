@@ -8,10 +8,13 @@ import atexit
 import time
 from samplebase import SampleBase
 #define inputs
-#runrule = 3
+#self.rule = 3
 #RGB on and off color values
 onColor = [120,0,255]
 offColor = [0,255,120]
+length = 64 #(length of panels)
+#Cool Rules: 30,90,54,110
+startrule = 45
 
 #atexit.register(clearOnExit)
 #class array:
@@ -29,6 +32,8 @@ class CellularAutomata(SampleBase):
 		self.offcolor = offColor
 		self.state = []
 		self.width = 0
+		self.length = length
+		self.rule = startrule
 
 	def step(self,a, rule, k=2, r=1):
 		nbrs = [a[c:] + a[:c] for c in range(-r, r+1, 1)]
@@ -44,7 +49,7 @@ class CellularAutomata(SampleBase):
 		#print "steps"
 		#print(steps)
 		seed=[1]
-		seed = ([0] * 15) + seed + ([0] * 15)
+		seed = ([0] * 15) + seed + ([0] * 16)
 		#for x in range(0,steps):
 		#	seed.append(random.randint(0,1))
 		#	pass
@@ -66,10 +71,13 @@ class CellularAutomata(SampleBase):
 		return result, (len(seed), steps + 1)
 
 	def nextRun(self,rule, steps, matrix, seed=[1], k=2, r=1):
-		for i in range(steps+1):
-			matrix.pop(0)
-		seed = self.step(matrix[0:steps+1], rule, k=k, r=r)
-		matrix += seed[:]
+		#for i in range(steps+1):
+		#	matrix.pop(0)
+		matrix.pop(0)
+		#print "self.length"
+		#print len(matrix)
+		seed = self.step(matrix[len(matrix)-1][:], rule, k=k, r=r)
+		matrix.append(seed[:])
 		#print result
 		#print matrix
 		#self.oncolor = [(self.oncolor[0] + 1) % 255,(self.oncolor[1] + 1) % 255,(self.oncolor[2] + 1) % 255]
@@ -79,23 +87,37 @@ class CellularAutomata(SampleBase):
 	def drawLEDs(self,matrix, dimensions,canvas):
 		#dimensions=dimensions+1
 		#this is some code for printing out matrix on the command line
-		print "dimensions"
-		print dimensions
-		print "matrix"
-		print matrix
-		for y in range(32):
-			for x in range(32):
+		#print "dimensions"
+		#print dimensions
+		#print "matrix"
+		#print matrix
+		#canvas.SetPixel(16, 16, 0, 0, 255)
+		#canvas.SetPixel(0, 16, 0, 255, 0)
+		#canvas.SetPixel(1, 16, 255, 0, 0)
+		#canvas.SetPixel(1, 2, 0, 255, 255)
+		#offsetCanvas = self.matrix.SwapOnVSync(canvas)
+		#time.sleep(10)	
+		#print "len(matrix[0])"
+		#print len(matrix[0])
+		#print "len(matrix)"
+		#print len(matrix)-1
+		for x in xrange(len(matrix)):
+			for y in xrange(len(matrix[0])):
+				#print "x"
+				#print x
+				#print "y"
+				#print y
 				if matrix[x][y] == 1:
+					#print x
 					#sys.stdout.write('X')
-					canvas.SetPixel(y, x, self.oncolor[0], self.oncolor[1], self.oncolor[2])
+					canvas.SetPixel(x, y, self.oncolor[0], self.oncolor[1], self.oncolor[2])
 					#canvas.SetPixel(y, x, onColor[0], onColor[1], onColor[2])
 				else:
 					#sys.stdout.write(' ')
 					#canvas.SetPixel(y, x, offColor[0], offColor[1], offColor[2])
-					canvas.SetPixel(y, x, self.offcolor[0], self.offcolor[1], self.offcolor[2])
+					canvas.SetPixel(x, y, self.offcolor[0], self.offcolor[1], self.offcolor[2])
 				#print matrix[y * (dimensions) + x],
-				offsetCanvas = self.matrix.SwapOnVSync(canvas)
-				time.sleep(.01)	
+				#time.sleep(.01)	
 			#print " "
 		#print " "
 		offsetCanvas = self.matrix.SwapOnVSync(canvas)
@@ -104,21 +126,28 @@ class CellularAutomata(SampleBase):
 		#		print x," ",y," ",y * (dimensions) + x," ",matrix[y * (dimensions) + x]
 		#	print " "
 	def Run(self):
-		runrule=30
-		lines=32
+		#lines=32
 		print "run has been called"
 		offsetCanvas = [1]
 		offsetCanvas = self.matrix.CreateFrameCanvas()
 
-		self.basicRun(runrule, lines)
-		self.drawLEDs(self.state, self.width, offsetCanvas)
+		self.basicRun(self.rule, self.length)
+		#self.drawLEDs(self.state, self.width, offsetCanvas)
+		ticker = 0
 		while 1:
 			self.drawLEDs(self.state, self.width, offsetCanvas)
-		#	self.nextRun(runrule, lines, result)
-		#	#showResult(result, dims)
-		#	self.drawLEDs(result, lines,offsetCanvas)
-		#	time.sleep(0.015)
-			time.sleep(1)
+			self.nextRun(self.rule, self.length, self.state)
+			#showResult(result, dims)
+			#self.drawLEDs(self.state, lines,offsetCanvas)
+#--------------------------------------------Ticker for changing rules			
+			#if ticker == 64:
+			#	self.rule = 
+			#	pass
+			#else:
+			#	ticker +=1
+			#	pass
+			time.sleep(0.015)
+			#time.sleep(1)
 
 if __name__ == "__main__":
     parser = CellularAutomata()
