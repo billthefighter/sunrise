@@ -7,14 +7,32 @@ import sys
 import atexit
 import time
 from samplebase import SampleBase
+from colorsys import hls_to_rgb
+from itertools import cycle
 #define inputs
 #self.rule = 3
-#RGB on and off color values
-onColor = [120,0,255]
-offColor = [0,255,120]
 length = 64 #(length of panels)
 #Cool Rules: 30,90,54,110
 startrule = 30
+luminance = 0.7
+saturation = 0.7
+
+COLORMAP_SIZE = 16
+
+colormap_ratios = [
+	hls_to_rgb(float(x) / COLORMAP_SIZE, luminance, saturation)
+	for x in xrange(COLORMAP_SIZE)
+]
+
+oncolors = [
+	[255 * x for x in rgbs]
+	for rgbs in colormap_ratios
+]
+
+def genOffColor(onColor):
+	return [255 - x for x in onColor]
+
+offcolors = map(genOffColor, oncolors)
 
 #atexit.register(clearOnExit)
 #class array:
@@ -23,13 +41,9 @@ startrule = 30
 #		self.ydim =
 
 
-
-
 class CellularAutomata(SampleBase):
 	def __init__(self, *args, **kwargs):
 		super(CellularAutomata, self).__init__(*args, **kwargs)
-		self.oncolor = onColor
-		self.offcolor = offColor
 		self.state = []
 		self.width = 0
 		self.length = length
@@ -131,8 +145,15 @@ class CellularAutomata(SampleBase):
 
 		self.basicRun(self.rule, self.length)
 		#self.drawLEDs(self.state, self.width, offsetCanvas)
+
+		hue = 0.0
 		ticker = 0
+		i = 0
+		len_oncolors = len(oncolors)
 		while 1:
+			i = (i + 1) % len_oncolors
+			self.oncolor = oncolors[i]
+			self.offcolor = offcolors[i]
 			self.drawLEDs(self.state, self.width, self.offsetCanvas)
 			self.nextRun(self.rule, self.length, self.state)
 			#showResult(result, dims)
