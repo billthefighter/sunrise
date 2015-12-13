@@ -115,19 +115,27 @@ class CellularAutomata(SampleBase):
 		#print len(matrix[0])
 		#print "len(matrix)"
 		#print len(matrix)-1
-		for x in xrange(len(matrix)):
-			for y in xrange(len(matrix[0])):
+
+		r_on, g_on, b_on = self.oncolor
+		def pixel_on(x, y):
+			canvas.SetPixel(x, y, r_on, g_on, b_on)
+
+		r_off, g_off, b_off = self.offcolor
+		def pixel_off(x, y):
+			canvas.SetPixel(x, y, r_off, g_off, b_off)
+
+		for x, row in enumerate(matrix):
+			for y, value in enumerate(row):
 				#print "x"
 				#print x
 				#print "y"
 				#print y
-				if matrix[x][y] == 1:
+				if value:
+					pixel_on(x, y)
+				else:
+					pixel_off(x, y)
 					#print x
 					#sys.stdout.write('X')
-					canvas.SetPixel(x, y, self.oncolor[0], self.oncolor[1], self.oncolor[2])
-				else:
-					#sys.stdout.write(' ')
-					canvas.SetPixel(x, y, self.offcolor[0], self.offcolor[1], self.offcolor[2])
 				#print matrix[y * (dimensions) + x],
 				#time.sleep(.01)	
 			#print " "
