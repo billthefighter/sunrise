@@ -111,16 +111,14 @@ class CellularAutomata(SampleBase):
 					#print x
 					#sys.stdout.write('X')
 					canvas.SetPixel(x, y, self.oncolor[0], self.oncolor[1], self.oncolor[2])
-					#canvas.SetPixel(y, x, onColor[0], onColor[1], onColor[2])
 				else:
 					#sys.stdout.write(' ')
-					#canvas.SetPixel(y, x, offColor[0], offColor[1], offColor[2])
 					canvas.SetPixel(x, y, self.offcolor[0], self.offcolor[1], self.offcolor[2])
 				#print matrix[y * (dimensions) + x],
 				#time.sleep(.01)	
 			#print " "
 		#print " "
-		offsetCanvas = self.matrix.SwapOnVSync(canvas)
+		self.offsetCanvas = self.matrix.SwapOnVSync(canvas)
 		#for y in range(dimensions):
 		#	for x in range(dimensions):
 		#		print x," ",y," ",y * (dimensions) + x," ",matrix[y * (dimensions) + x]
@@ -128,14 +126,14 @@ class CellularAutomata(SampleBase):
 	def Run(self):
 		#lines=32
 		print "run has been called"
-		offsetCanvas = [1]
-		offsetCanvas = self.matrix.CreateFrameCanvas()
+		self.offsetCanvas = [1]
+		self.offsetCanvas = self.matrix.CreateFrameCanvas()
 
 		self.basicRun(self.rule, self.length)
 		#self.drawLEDs(self.state, self.width, offsetCanvas)
 		ticker = 0
 		while 1:
-			self.drawLEDs(self.state, self.width, offsetCanvas)
+			self.drawLEDs(self.state, self.width, self.offsetCanvas)
 			self.nextRun(self.rule, self.length, self.state)
 			#showResult(result, dims)
 			#self.drawLEDs(self.state, lines,offsetCanvas)
@@ -146,8 +144,6 @@ class CellularAutomata(SampleBase):
 			#else:
 			#	ticker +=1
 			#	pass
-			time.sleep(0.015)
-			#time.sleep(1)
 
 if __name__ == "__main__":
     parser = CellularAutomata()
