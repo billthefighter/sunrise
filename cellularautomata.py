@@ -1,38 +1,35 @@
 #! python2.7
-from PIL import Image
-from PIL import ImageOps
 import random
 import sys
-#from rgbmatrix import Adafruit_RGBmatrix
 import atexit
 import time
 from samplebase import SampleBase
 from colorsys import hls_to_rgb
-from itertools import cycle
 #define inputs
 #self.rule = 3
 length = 64 #(length of panels)
 #Cool Rules: 30,90,54,110
 startrule = 30
-luminance = 0.7
-saturation = 0.7
+luminance = 0.2
+saturation = 1.0
 
 COLORMAP_SIZE = 16
 
-colormap_ratios = [
-	hls_to_rgb(float(x) / COLORMAP_SIZE, luminance, saturation)
-	for x in xrange(COLORMAP_SIZE)
-]
+def lum2rgb(hue):
+	return [x * 256 for x in hls_to_rgb(hue, luminance, saturation)]
 
-oncolors = [
-	[255 * x for x in rgbs]
-	for rgbs in colormap_ratios
-]
+def make_colormap(start_hue, stop_hue):
+	hue_range = stop_hue - start_hue
+	return map(lum2rgb, [
+		start_hue + (hue_range * float(x) / COLORMAP_SIZE)
+		for x in range(COLORMAP_SIZE)
+	])
 
-def genOffColor(onColor):
-	return [255 - x for x in onColor]
+oncolors = make_colormap(0.2, 0.4)
+oncolors += reversed(oncolors)
 
-offcolors = map(genOffColor, oncolors)
+offcolors = make_colormap(0.6, 0.8)
+offcolors += reversed(offcolors)
 
 #atexit.register(clearOnExit)
 #class array:
