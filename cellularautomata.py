@@ -5,6 +5,8 @@ import atexit
 import time
 from samplebase import SampleBase
 from colorsys import hls_to_rgb
+from random import shuffle
+from itertools import izip
 #define inputs
 #self.rule = 3
 length = 64 #(length of panels)
@@ -37,7 +39,6 @@ offcolors += reversed(offcolors)
 #		self.xdim = 32 
 #		self.ydim =
 
-
 class CellularAutomata(SampleBase):
 	def __init__(self, *args, **kwargs):
 		super(CellularAutomata, self).__init__(*args, **kwargs)
@@ -46,6 +47,7 @@ class CellularAutomata(SampleBase):
 		self.length = length
 		self.rule = startrule
 
+	#@profile
 	def step(self,a, rule, k=2, r=1):
 		nbrs = [a[c:] + a[:c] for c in range(-r, r+1, 1)]
 		l = []
@@ -55,11 +57,10 @@ class CellularAutomata(SampleBase):
 				result = (result * k) + i
 			l.append(result)
 		return [((rule / (k ** v)) % k) for v in l]
-
+	#@profile
 	def basicRun(self,rule, steps, seed=[1], k=2, r=1):
 		#print "steps"
 		#print(steps)
-		seed=[1]
 		seed = ([0] * 15) + seed + ([0] * 16)
 		#for x in range(0,steps):
 		#	seed.append(random.randint(0,1))
@@ -80,7 +81,7 @@ class CellularAutomata(SampleBase):
 		self.state = result
 		self.width = len(result)
 		return result, (len(seed), steps + 1)
-
+	#@profile
 	def nextRun(self,rule, steps, matrix, seed=[1], k=2, r=1):
 		#for i in range(steps+1):
 		#	matrix.pop(0)
@@ -94,7 +95,7 @@ class CellularAutomata(SampleBase):
 		#self.oncolor = [(self.oncolor[0] + 1) % 255,(self.oncolor[1] + 1) % 255,(self.oncolor[2] + 1) % 255]
 		#self.offcolor = [(self.offcolor[0] + 1) % 255, (self.offcolor[1] + 1) % 255, (self.offcolor[2] + 1) % 255]
 		return matrix, (len(seed), steps + 1)
-		
+	#@profile
 	def drawLEDs(self,matrix, dimensions,canvas):
 		#dimensions=dimensions+1
 		#this is some code for printing out matrix on the command line
@@ -121,16 +122,31 @@ class CellularAutomata(SampleBase):
 		def pixel_off(x, y):
 			canvas.SetPixel(x, y, r_off, g_off, b_off)
 
-		for x, row in enumerate(matrix):
-			for y, value in enumerate(row):
-				#print "x"
-				#print x
-				#print "y"
-				#print y
-				if value:
-					pixel_on(x, y)
-				else:
-					pixel_off(x, y)
+		flat_matrix = []
+		for row in matrix:
+			flat_matrix.extend(row)
+
+		# Avoid recomputing the x and y values for every pixel
+		# Profiling showed that about half the time was spent
+		# doing the division and modulo. This computation should
+		# run only once.
+		if not hasattr(self, 'cached_xys'):
+			self.cached_xys = []
+			num_rows = len(matrix[0])
+			for i in range(len(flat_matrix)):
+				x = i / num_rows
+				y = i % num_rows
+				self.cached_xys.append((x, y))
+
+		# Make sure the matrix didn't sneakily change size
+		assert len(self.cached_xys) == len(flat_matrix)
+
+		# Flatten out the xys to avoid a nested loop
+		for (x, y), value in izip(self.cached_xys, flat_matrix):
+			if value:
+				pixel_on(x, y)
+			else:
+				pixel_off(x, y)
 					#print x
 					#sys.stdout.write('X')
 				#print matrix[y * (dimensions) + x],
@@ -142,10 +158,10 @@ class CellularAutomata(SampleBase):
 		#	for x in range(dimensions):
 		#		print x," ",y," ",y * (dimensions) + x," ",matrix[y * (dimensions) + x]
 		#	print " "
+	#@profile
 	def Run(self):
 		#lines=32
 		print "run has been called"
-		self.offsetCanvas = [1]
 		self.offsetCanvas = self.matrix.CreateFrameCanvas()
 
 		self.basicRun(self.rule, self.length)
