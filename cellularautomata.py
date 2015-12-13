@@ -28,10 +28,10 @@ def make_colormap(start_hue, stop_hue):
 		for x in range(COLORMAP_SIZE)
 	])
 
-oncolors = make_colormap(0.2, 0.4)
+oncolors = make_colormap(0.0, 0.5)
 oncolors += reversed(oncolors)
 
-offcolors = make_colormap(0.6, 0.8)
+offcolors = make_colormap(0.5, 1.0)
 offcolors += reversed(offcolors)
 
 #atexit.register(clearOnExit)
