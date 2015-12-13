@@ -5,13 +5,14 @@ import atexit
 import time
 from samplebase import SampleBase
 from colorsys import hls_to_rgb
-from random import shuffle
-from itertools import izip
+import random
+from itertools import izip, count
 #define inputs
 #self.rule = 3
 length = 64 #(length of panels)
-#Cool Rules: 30,90,54,110
-startrule = 30
+rule_duration = 8
+cool_rules = [30, 73, 169, 54, 110]
+startrule = 94
 luminance = 0.2
 saturation = 1.0
 
@@ -42,10 +43,9 @@ offcolors += reversed(offcolors)
 class CellularAutomata(SampleBase):
 	def __init__(self, *args, **kwargs):
 		super(CellularAutomata, self).__init__(*args, **kwargs)
-		self.state = []
+		self.state = [[0]]
 		self.width = 0
 		self.length = length
-		self.rule = startrule
 
 	#@profile
 	def step(self,a, rule, k=2, r=1):
@@ -158,23 +158,36 @@ class CellularAutomata(SampleBase):
 		#	for x in range(dimensions):
 		#		print x," ",y," ",y * (dimensions) + x," ",matrix[y * (dimensions) + x]
 		#	print " "
+
+	def stay_alive(self):
+		# If the last row is all the same then the cells
+		# are dead so start over
+		last_row = self.state[-1]
+		if all(x == last_row[0] for x in last_row):
+			self.basicRun(self.rule, self.length)
+
+	def pick_a_new_rule(self):
+		self.rule = random.choice(cool_rules)
+		print 'Now using rule %d' % (self.rule)
+
 	#@profile
 	def Run(self):
 		#lines=32
 		print "run has been called"
 		self.offsetCanvas = self.matrix.CreateFrameCanvas()
 
-		self.basicRun(self.rule, self.length)
-		#self.drawLEDs(self.state, self.width, offsetCanvas)
-
-		hue = 0.0
-		ticker = 0
-		i = 0
+		color = 0
 		len_oncolors = len(oncolors)
-		while 1:
-			i = (i + 1) % len_oncolors
-			self.oncolor = oncolors[i]
-			self.offcolor = offcolors[i]
+
+		for i in count():
+			if i % rule_duration == 0:
+				self.pick_a_new_rule()
+
+			self.stay_alive()
+
+			color = (color + 1) % len_oncolors
+			self.oncolor = oncolors[color]
+			self.offcolor = offcolors[color]
 			self.drawLEDs(self.state, self.width, self.offsetCanvas)
 			self.nextRun(self.rule, self.length, self.state)
 			#showResult(result, dims)
