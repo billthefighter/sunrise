@@ -10,13 +10,13 @@ from itertools import izip, count
 #define inputs
 #self.rule = 3
 length = 64 #(length of panels)
-rule_duration = 8
+rule_duration = 16
 cool_rules = [30, 73, 169, 54, 110]
 startrule = 94
-luminance = 0.2
+luminance = 0.3
 saturation = 1.0
 
-COLORMAP_SIZE = 16
+COLORMAP_SIZE = 256
 
 def lum2rgb(hue):
 	return [x * 256 for x in hls_to_rgb(hue, luminance, saturation)]
@@ -33,6 +33,8 @@ oncolors += reversed(oncolors)
 
 offcolors = make_colormap(0.5, 1.0)
 offcolors += reversed(offcolors)
+
+colorpairs = zip(oncolors, offcolors)
 
 #atexit.register(clearOnExit)
 #class array:
@@ -170,14 +172,13 @@ class CellularAutomata(SampleBase):
 		self.rule = random.choice(cool_rules)
 		print 'Now using rule %d' % (self.rule)
 
+		self.oncolor, self.offcolor = random.choice(colorpairs)
+
 	#@profile
 	def Run(self):
 		#lines=32
 		print "run has been called"
 		self.offsetCanvas = self.matrix.CreateFrameCanvas()
-
-		color = 0
-		len_oncolors = len(oncolors)
 
 		for i in count():
 			if i % rule_duration == 0:
@@ -185,9 +186,6 @@ class CellularAutomata(SampleBase):
 
 			self.stay_alive()
 
-			color = (color + 1) % len_oncolors
-			self.oncolor = oncolors[color]
-			self.offcolor = offcolors[color]
 			self.drawLEDs(self.state, self.width, self.offsetCanvas)
 			self.nextRun(self.rule, self.length, self.state)
 			#showResult(result, dims)
