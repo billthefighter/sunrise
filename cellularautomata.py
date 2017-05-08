@@ -9,6 +9,7 @@ import random
 from itertools import izip, count
 #define inputs
 #self.rule = 3
+#<<<<<<< HEAD
 length = 64 #(length of panels)
 rule_duration = 16
 cool_rules = [30, 73, 169, 54, 110]
@@ -35,6 +36,14 @@ offcolors = make_colormap(0.5, 1.0)
 offcolors += reversed(offcolors)
 
 colorpairs = zip(oncolors, offcolors)
+#=======
+##RGB on and off color values
+#onColor = [120,0,255]
+#offColor = [0,255,120]
+#length = 64 #(length of panels)
+##Cool Rules: 30,90,54,110
+#startrule = 45
+#>>>>>>> f0996d8a0166539213c3e613d4e498f3267a7dc4
 
 #atexit.register(clearOnExit)
 #class array:
@@ -42,12 +51,27 @@ colorpairs = zip(oncolors, offcolors)
 #		self.xdim = 32 
 #		self.ydim =
 
+#<<<<<<< HEAD
 class CellularAutomata(SampleBase):
 	def __init__(self, *args, **kwargs):
 		super(CellularAutomata, self).__init__(*args, **kwargs)
 		self.state = [[0]]
 		self.width = 0
 		self.length = length
+#=======
+#
+#
+#
+#class CellularAutomata(SampleBase):
+#	def __init__(self, *args, **kwargs):
+#		super(CellularAutomata, self).__init__(*args, **kwargs)
+#		self.oncolor = onColor
+#		self.offcolor = offColor
+#		self.state = []
+#		self.width = 0
+#		self.length = length
+#		self.rule = startrule
+#>>>>>>> f0996d8a0166539213c3e613d4e498f3267a7dc4
 
 	#@profile
 	def step(self,a, rule, k=2, r=1):
@@ -63,6 +87,10 @@ class CellularAutomata(SampleBase):
 	def basicRun(self,rule, steps, seed=[1], k=2, r=1):
 		#print "steps"
 		#print(steps)
+#<<<<<<< HEAD
+#=======
+#		seed=[1]
+#>>>>>>> f0996d8a0166539213c3e613d4e498f3267a7dc4
 		seed = ([0] * 15) + seed + ([0] * 16)
 		#for x in range(0,steps):
 		#	seed.append(random.randint(0,1))
@@ -115,6 +143,7 @@ class CellularAutomata(SampleBase):
 		#print len(matrix[0])
 		#print "len(matrix)"
 		#print len(matrix)-1
+#<<<<<<< HEAD
 
 		r_on, g_on, b_on = self.oncolor
 		def pixel_on(x, y):
@@ -151,11 +180,32 @@ class CellularAutomata(SampleBase):
 				pixel_off(x, y)
 					#print x
 					#sys.stdout.write('X')
+#=======
+#		for x in xrange(len(matrix)):
+#			for y in xrange(len(matrix[0])):
+#				#print "x"
+#				#print x
+#				#print "y"
+#				#print y
+#				if matrix[x][y] == 1:
+#					#print x
+#					#sys.stdout.write('X')
+#					canvas.SetPixel(x, y, self.oncolor[0], self.oncolor[1], self.oncolor[2])
+#					#canvas.SetPixel(y, x, onColor[0], onColor[1], onColor[2])
+#				else:
+#					#sys.stdout.write(' ')
+#					#canvas.SetPixel(y, x, offColor[0], offColor[1], offColor[2])
+#					canvas.SetPixel(x, y, self.offcolor[0], self.offcolor[1], self.offcolor[2])
+#>>>>>>> f0996d8a0166539213c3e613d4e498f3267a7dc4
 				#print matrix[y * (dimensions) + x],
 				#time.sleep(.01)	
 			#print " "
 		#print " "
+#<<<<<<< HEAD
 		self.offsetCanvas = self.matrix.SwapOnVSync(canvas)
+#=======
+#		offsetCanvas = self.matrix.SwapOnVSync(canvas)
+#>>>>>>> f0996d8a0166539213c3e613d4e498f3267a7dc4
 		#for y in range(dimensions):
 		#	for x in range(dimensions):
 		#		print x," ",y," ",y * (dimensions) + x," ",matrix[y * (dimensions) + x]
@@ -186,7 +236,15 @@ class CellularAutomata(SampleBase):
 
 			self.stay_alive()
 
+#<<<<<<< HEAD
 			self.drawLEDs(self.state, self.width, self.offsetCanvas)
+#=======
+#		self.basicRun(self.rule, self.length)
+#		#self.drawLEDs(self.state, self.width, offsetCanvas)
+#		ticker = 0
+#		while 1:
+#			self.drawLEDs(self.state, self.width, offsetCanvas)
+#>>>>>>> f0996d8a0166539213c3e613d4e498f3267a7dc4
 			self.nextRun(self.rule, self.length, self.state)
 			#showResult(result, dims)
 			#self.drawLEDs(self.state, lines,offsetCanvas)
@@ -197,6 +255,11 @@ class CellularAutomata(SampleBase):
 			#else:
 			#	ticker +=1
 			#	pass
+#<<<<<<< HEAD
+#=======
+#			time.sleep(0.015)
+#			#time.sleep(1)
+#>>>>>>> f0996d8a0166539213c3e613d4e498f3267a7dc4
 
 if __name__ == "__main__":
     parser = CellularAutomata()
